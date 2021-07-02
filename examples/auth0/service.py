@@ -1,10 +1,3 @@
-# Authenticator middleware for Python Falcon
-
-Python [Falcon](https://falcon.readthedocs.io/en/stable/) is a great, lightweight and fast Python framework to create
-HTTP APIs. This package provides an easy add-on to configure a middleware for authentication.
-
-## Usage
-```python
 import falcon
 from python_falcon_authenticator import PythonFalconAuthorizer
 from python_falcon_authenticator.authenticators.jwt import Authenticator as JwtAuthenticator
@@ -12,10 +5,15 @@ from python_falcon_authenticator.decorators import resource_auth_config
 from python_falcon_authenticator.utils.route_requests_with_responder import RouterWithRequestResponder
 
 
+# Auth0 client ID
+client_id = "CLIENT_ID"
+# Auth0 domain
+oauth_api = "https://XXX.eu.auth0.com/"
+
 authenticator = PythonFalconAuthorizer(
     JwtAuthenticator(
-        client_id="CliEnTiD",
-        oauth_api="https://oauth.auth.com",
+        client_id=client_id,
+        oauth_api=oauth_api,
     )
 )
 
@@ -23,7 +21,7 @@ authenticator = PythonFalconAuthorizer(
 @resource_auth_config(
     skip_methods=['POST'],  # skip a given method
     skip_uris=['/users'],  # skip a given uri TEMPLATE used in add_route())
-    skip_responders=['on_post']  # skip a responder name
+    skip_responders=['on_post', 'on_get_skipped']  # skip a responder name
 )
 class UsersResource:
     def on_post(self, req, resp):
@@ -35,21 +33,17 @@ class UsersResource:
         # This one is skipped only because of skip_uris
         resp.media = {"hello": "world"}
 
+    def on_get_not_skipped(self, req, resp):
+        # not skipped
+        resp.media = {"hello": "world"}
 
-api = falcon.API(
-    middleware=[authenticator], 
-    router=RouterWithRequestResponder())
+    def on_get_skipped(self, req, resp):
+        # not skipped
+        resp.media = {"hello": "world"}
+
+
+api = falcon.API(middleware=[authenticator], router=RouterWithRequestResponder())
 
 api.add_route("/users", UsersResource())
-```
-
-## Authorizers
-
-#### OpenID JWT
-> requirements:
-> * [cryptography](https://pypi.org/project/cryptography/)
-> * [jwt](https://pypi.org/project/jwt/)
-> * requests
-
-## TODO
-* authorizer (403) vs authenticator (401)
+api.add_route("/users/not_skipped", UsersResource(), suffix="not_skipped")
+api.add_route("/users/skipped", UsersResource(), suffix="skipped")
