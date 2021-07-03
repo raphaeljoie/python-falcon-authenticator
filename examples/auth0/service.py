@@ -8,12 +8,12 @@ from python_falcon_authenticator.utils.route_requests_with_responder import Rout
 # Auth0 client ID
 client_id = "CLIENT_ID"
 # Auth0 domain
-oauth_api = "https://XXX.eu.auth0.com/"
+oauth_domain = "https://XXX.eu.auth0.com/"
 
 authenticator = PythonFalconAuthenticator(
     JwtAuthenticator(
         client_id=client_id,
-        oauth_api=oauth_api,
+        oauth_domain=oauth_domain,
     )
 )
 

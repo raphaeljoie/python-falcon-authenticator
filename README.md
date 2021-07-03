@@ -14,7 +14,7 @@ from python_falcon_authenticator.utils.route_requests_with_responder import Rout
 authenticator = PythonFalconAuthenticator(
     JwtAuthenticator(
         client_id="CliEnTiD",
-        oauth_api="https://oauth.auth.com",
+        oauth_domain="https://oauth.auth.com",
     )
 )
 

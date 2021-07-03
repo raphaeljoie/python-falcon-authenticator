@@ -27,15 +27,15 @@ def safe_get_jwt_body_attr(body64, attr):
 
 
 class Authenticator(BaseAuthenticator):
-    def __init__(self, client_id, oauth_api, context_builder=None, oidc_uri: str = None):
+    def __init__(self, client_id, oauth_domain, context_builder=None, oidc_uri: str = None):
         assert isinstance(client_id, str)
 
         self.client_id = client_id
-        self.oauth_api = oauth_api
+        self.oauth_domain = oauth_domain
         self.context_builder = context_builder or default_context_builder
-        self.oidc_uri = oidc_uri or urllib.parse.urljoin(self.oauth_api, '.well-known/openid-configuration')
+        self.oidc_uri = oidc_uri or urllib.parse.urljoin(self.oauth_domain, '.well-known/openid-configuration')
 
-        self.jwks_uri = None  # could try self.oauth_api + .well-known/jwks.json
+        self.jwks_uri = None  # could try self.oauth_domain + .well-known/jwks.json
         self.jwks = {}
         self.public_keys = {}
 
@@ -71,7 +71,7 @@ class Authenticator(BaseAuthenticator):
 
         public_key = self.get_public_key(header['kid'])
 
-        issuer = self.oauth_api
+        issuer = self.oauth_domain
         audience = self.client_id
 
         try:
