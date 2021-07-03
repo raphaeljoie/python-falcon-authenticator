@@ -51,5 +51,16 @@ api.add_route("/users", UsersResource())
 > * [jwt](https://pypi.org/project/jwt/)
 > * requests
 
+#### Static Basic
+Statically provide username and password to match
+```py
+from python_falcon_authenticator.authenticators.static_basic import Authenticator as BasicAuthenticator
+
+authenticator = BasicAuthenticator(
+    username="raphaeljoie",
+    password="Passw0rd"
+)
+```
+
 ## TODO
 * authorizer (403) vs authenticator (401)
