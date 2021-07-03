@@ -6,13 +6,12 @@ HTTP APIs. This package provides an easy add-on to configure a middleware for au
 ## Usage
 ```python
 import falcon
-from python_falcon_authenticator import PythonFalconAuthorizer
+from python_falcon_authenticator import PythonFalconAuthenticator
 from python_falcon_authenticator.authenticators.jwt import Authenticator as JwtAuthenticator
 from python_falcon_authenticator.decorators import resource_auth_config
 from python_falcon_authenticator.utils.route_requests_with_responder import RouterWithRequestResponder
 
-
-authenticator = PythonFalconAuthorizer(
+authenticator = PythonFalconAuthenticator(
     JwtAuthenticator(
         client_id="CliEnTiD",
         oauth_api="https://oauth.auth.com",
@@ -37,7 +36,7 @@ class UsersResource:
 
 
 api = falcon.API(
-    middleware=[authenticator], 
+    middleware=[authenticator],
     router=RouterWithRequestResponder())
 
 api.add_route("/users", UsersResource())
@@ -61,6 +60,3 @@ authenticator = BasicAuthenticator(
     password="Passw0rd"
 )
 ```
-
-## TODO
-* authorizer (403) vs authenticator (401)

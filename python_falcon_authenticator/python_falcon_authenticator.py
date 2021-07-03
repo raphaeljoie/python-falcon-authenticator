@@ -10,27 +10,27 @@ if TYPE_CHECKING:
     from .authenticators import BaseAuthenticator
 
 
-class PythonFalconAuthorizer:
+class PythonFalconAuthenticator:
     RESOURCE_AUTH_CONFIG_ATTR = "auth_config"
 
-    def __init__(self, authorizers: Union[BaseAuthenticator, List[BaseAuthenticator]],
+    def __init__(self, authenticators: Union[BaseAuthenticator, List[BaseAuthenticator]],
                  exempt_routes=None, exempt_methods=None):
-        self.authorizers: List[BaseAuthenticator] = authorizers if isinstance(authorizers, list) else [authorizers]
+        self.authenticators: List[BaseAuthenticator] = authenticators if isinstance(authenticators, list) else [authenticators]
 
     def process_resource(self, req, resp, resource, params):
-        if hasattr(resource, PythonFalconAuthorizer.RESOURCE_AUTH_CONFIG_ATTR):
+        if hasattr(resource, PythonFalconAuthenticator.RESOURCE_AUTH_CONFIG_ATTR):
             resource_auth_config = getattr(resource, self.RESOURCE_AUTH_CONFIG_ATTR)
             assert isinstance(resource_auth_config, ResourceAuthConfig), \
                 f"Expected {type(ResourceAuthConfig)} for authorization config of {resource} but " \
-                f"found {type(resource_auth_config)} type at attr {PythonFalconAuthorizer.RESOURCE_AUTH_CONFIG_ATTR}"
+                f"found {type(resource_auth_config)} type at attr {PythonFalconAuthenticator.RESOURCE_AUTH_CONFIG_ATTR}"
 
             if resource_auth_config.should_skip(req, params):
                 return
 
         errors = []
-        for authorizer in self.authorizers:
+        for authenticator in self.authenticators:
             try:
-                if authorizer.authorize(req, resp, resource, params):
+                if authenticator.authenticate(req, resp, resource, params):
                     return
             except falcon.HTTPUnauthorized as e:
                 errors.append(e)

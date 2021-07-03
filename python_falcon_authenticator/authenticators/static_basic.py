@@ -9,7 +9,7 @@ class Authenticator(BaseAuthenticator):
         self.username = username
         self.password = password
 
-    def authorize(self, req, resp, resource, params) -> bool:
+    def authenticate(self, req, resp, resource, params) -> bool:
         # Ensure Authorization header
         if 'AUTHORIZATION' not in req.headers:
             raise falcon.HTTPUnauthorized(title="Missing Authorization Header")

@@ -1,5 +1,5 @@
 import falcon
-from python_falcon_authenticator import PythonFalconAuthorizer
+from python_falcon_authenticator import PythonFalconAuthenticator
 from python_falcon_authenticator.authenticators.static_basic import Authenticator as BasicAuthenticator
 
 
@@ -8,7 +8,7 @@ client_id = "CLIENT_ID"
 # Auth0 domain
 oauth_api = "https://XXX.eu.auth0.com/"
 
-authenticator = PythonFalconAuthorizer(
+authenticator = PythonFalconAuthenticator(
     BasicAuthenticator(
         username="raphaeljoie",
         password="Passw0rd",

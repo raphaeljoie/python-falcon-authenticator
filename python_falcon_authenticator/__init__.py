@@ -1,3 +1,3 @@
-from .python_falcon_authorizer import PythonFalconAuthorizer
+from .python_falcon_authenticator import PythonFalconAuthenticator
 from .authenticators import BaseAuthenticator
 from .resource_auth_config import ResourceAuthConfig
