@@ -2,6 +2,11 @@ import falcon
 
 
 def find_with_request_responder(original_find, router, uri, req=None):
+    """
+    Execute an original `find` function on a given router using provided argument according to Falcon doc,
+    populate req.responder with the responder name (if any), and finally return the value returned by the original
+    `find` function
+    """
     out = original_find(router, uri, req)
 
     if req and out:
