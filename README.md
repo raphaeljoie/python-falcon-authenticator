@@ -19,6 +19,13 @@ authenticator = PythonFalconAuthenticator(
 )
 
 
+class SecuredResource:
+    def on_get(self, req, resp):
+        # The request context is filled with authenticated user info
+        # using a context builder function
+        resp.media = {'calling_user_id': req.context.user_id}
+
+
 @resource_auth_config(
     skip_methods=['POST'],  # skip a given method
     skip_uris=['/users'],  # skip a given uri TEMPLATE used in add_route())
@@ -40,15 +47,32 @@ api = falcon.API(
     router=RouterWithRequestResponder())
 
 api.add_route("/users", UsersResource())
+api.add_route("/secured", SecuredResource())
 ```
 
 ## Authorizers
 
 #### OpenID JWT
-> requirements:
+> Following peer dependencies are required to use that authorizer:
 > * [cryptography](https://pypi.org/project/cryptography/)
 > * [jwt](https://pypi.org/project/jwt/)
-> * requests
+> * [requests](https://pypi.org/project/requests/)
+
+```py
+from python_falcon_authenticator.authenticators.jwt import Authenticator as JwtAuthenticator
+
+authenticator = JwtAuthenticator(
+    client_id="CliEnTiD",
+    oauth_domain="https://oauth.auth.com",
+)
+```
+
+| parameter | default value | description |
+| --- | --- | --- |
+| `client_id` | | **REQUIRED** the expected OAuth Client identifier as defined in the `aud` (audience) field of the [OpenID JWT](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3)
+| `oauth_domain` | | **REQUIRED** the identity provider OAuth domain as defined in the `iss` (issuer) field of the [OpenID JWT](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1) 
+| `oidc_uri` | `{oauth_domain}/.well-known/openid-configuration` | URI of the OpenID Connect metadata related to the authentication server as defined in [openid.net](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata). Only the `jwks_uri` attribute is being used
+| `context_builder` | `default_context_builder` from `python_falcon_authenticator.authenticators.jwt` | a function to populate a [context](https://falcon.readthedocs.io/en/stable/api/request_and_response_wsgi.html#falcon.Request.context) giving a JWT decoded payload dictionary.
 
 #### Static Basic
 Statically provide username and password to match
